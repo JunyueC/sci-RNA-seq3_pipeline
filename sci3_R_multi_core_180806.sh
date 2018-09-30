@@ -99,13 +99,14 @@ echo "Start filter and sort the sam files..."
 echo input folder: $STAR_output_folder
 echo output folder: $filtered_sam_folder
 module load samtools/1.4
-core=4
+tmp_core=4
 bash_script=$script_path/sci3_filter.sh
-Rscript $R_script $bash_script $STAR_output_folder $sample_ID $filtered_sam_folder $core
+Rscript $R_script $bash_script $STAR_output_folder $sample_ID $filtered_sam_folder $tmp_core
 
-core=20
 # make a folder for rmdup_sam_folder, 
 # Then for each filtered sam file, remove the duplicates based on UMI and barcode, chromatin number and position
+
+# first remove duplicates only considering exact match
 echo
 echo "Start removing duplicates..."
 echo input folder: $filtered_sam_folder
@@ -113,9 +114,9 @@ echo output folder: $rmdup_sam_folder
 mkdir -p $rmdup_sam_folder
 module unload python
 
-# bash_script=$script_path/sci3_rmdup_nomismatch.sh # for removing duplicates only considering exact match
-bash_script=$script_path/sci3_rmdup.sh
-Rscript $R_script $bash_script $filtered_sam_folder $sample_ID $rmdup_sam_folder $core $mismatch
+bash_script=$script_path/sci3_rmdup_nomismatch.sh # for removing duplicates only considering exact match
+## bash_script=$script_path/sci3_rmdup.sh
+$Rscript $R_script $bash_script $filtered_sam_folder $sample_ID $rmdup_sam_folder $core $mismatch
 
 #mv the reported files to the report/duplicate_read/ folder
 mkdir -p $input_folder/../report/duplicate_read
@@ -124,8 +125,22 @@ echo "removing duplicates completed.."
 echo
 echo "Alignment and sam file preprocessing are done."  
 
+# repeat the rmdup process to remove duplicates based on UMI distance
+echo
+echo "Start removing duplicates..."
+echo input folder: $all_output_folder/rmdup_sam
+echo output folder: $all_output_folder/rmdup_sam_2
+mkdir -p $all_output_folder/rmdup_sam_2
+module unload python
+
+# bash_script=$script_path/sci3_rmdup_nomismatch.sh # for removing duplicates only considering exact match
+bash_script=$script_path/sci3_rmdup.sh
+filtered_sam_folder=$all_output_folder/rmdup_sam
+rmdup_sam_folder=$all_output_folder/rmdup_sam_2
+$Rscript $R_script $bash_script $filtered_sam_folder $sample_ID $rmdup_sam_folder $core $mismatch
+
 ################# split the sam file based on the barcode, and mv the result to the report folder
-sam_folder=$all_output_folder/rmdup_sam
+sam_folder=$all_output_folder/rmdup_sam_2
 output_folder=$all_output_folder/sam_splitted
 
 echo
@@ -138,7 +153,7 @@ echo cutoff value: $cutoff
 module unload python
 
 bash_script=$script_path/sci3_split.sh
-Rscript $R_script $bash_script $sam_folder $sample_ID $output_folder $core $barcodes $cutoff
+$Rscript $R_script $bash_script $sam_folder $sample_ID $output_folder $core $barcodes $cutoff
 
 
 cat $output_folder/*sample_list.txt>$output_folder/All_samples.txt
