@@ -270,6 +270,7 @@ def sciRNA_count_parallel(gtf_file, input_folder, sample_ID, core_number):
     #print("print WBGENE id:", gene_annotat.loc["WBGene00004947", 4])
     #print("Print transcript end, ", len(gene_end))
     
+    print("Reading " + sample_ID + '...')
     sample_ID = list(pd.read_csv(sample_ID, header=None)[0])
     
     # generate the cell ID annotate file

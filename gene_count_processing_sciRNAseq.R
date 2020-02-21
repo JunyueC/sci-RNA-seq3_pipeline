@@ -1,9 +1,9 @@
 
 # define the report folder from sci-RNA-seq pipeline
-report_folder ="~/Projects/nobackup/180826_drosophila_ciona_test//output_dro/report"
+report_folder ="/mnt/cbbi-data00/internal_data/20191212-Pool-1058_sci-rna-seq/report2"
 
 # define the output folder for output the df_cell, df_gene and gene_count matrix
-output_folder = "~/Projects/nobackup/180826_drosophila_ciona_test//output_dro/report/"
+output_folder = "/mnt/cbbi-data00/internal_data/20191212-Pool-1058_sci-rna-seq/results"
 
 suppressMessages(library(Matrix))
 suppressMessages(library(tidyverse))

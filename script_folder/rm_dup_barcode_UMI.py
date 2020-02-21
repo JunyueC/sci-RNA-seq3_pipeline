@@ -28,8 +28,11 @@ def rm_dup_samfile(samfile, output_file, mismatch):
     pre_dup_num = 0
     cur_dup_num = 0
     
+    counter = 0
     for line in f1:
-        
+        counter += 1
+        if counter%100==0:
+            print(counter)
         if (line[0] == '@'):
             f2.write(line)
         else:

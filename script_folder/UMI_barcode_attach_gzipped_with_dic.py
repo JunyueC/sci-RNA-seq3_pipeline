@@ -39,6 +39,7 @@ def UMI_attach_read2_barcode_list(sample, input_folder, output_folder, ligation_
     while (line1):
         total_line += 1
         line1 = f1.readline()
+
         #print("read1: ", line1)
         # first check if the ligation barcode match with the barcode
         tmp_lig = line1[0:10]
